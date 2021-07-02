@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "schedule": "0 0 * * * *",
+      "name": "updateFamiliesAccountTypeTimer",
+      "type": "timerTrigger",
+      "direction": "in"
+    }
+  ],
+  "scriptFile": "../dist/update-families-account-type/index.js"
+}

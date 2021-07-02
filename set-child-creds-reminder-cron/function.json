@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "schedule": "0 0 12 * * *",
+      "name": "setChildCredsReminderTimer",
+      "type": "timerTrigger",
+      "direction": "in"
+    }
+  ],
+  "scriptFile": "../dist/set-child-creds-reminder-cron/index.js"
+}

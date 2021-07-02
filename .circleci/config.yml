@@ -1,0 +1,70 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@3.0.1
+
+jobs:
+  test_unit:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+      - run: yarn test
+  test_e2e:
+    executor: node/default
+    docker:
+      - image: circleci/node:12.18.3
+      - image: postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: kidslike
+          POSTGRES_DB: kidslike
+          POSTGRES_PASSWORD: qwerty
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+          steps:
+      - run:
+          environment:
+            NODE_ENV: test
+            DEFAULT_TASK_NUMBER_TO_CREATE: 21
+            FIRST_TASK_LEVEL_PERCENTAGE: 24
+            SECOND_TASK_LEVEL_PERCENTAGE: 34
+            DEFAULT_FIRST_LEVEL_TASKS_COUNT: 5
+            DEFAULT_SECOND_LEVEL_TASKS_COUNT: 7
+            POINTS_BOOST_FOR_LEVEL_UP_PERCENTAGE: 33.333333333333333
+            ALLOWED_ORIGIN: test
+            PORT: 3000
+            DB_TYPE: postgres
+            DB_HOST: localhost
+            DB_PORT: 5432
+            DB_USERNAME: kidslike
+            DB_PASSWORD: qwerty
+            DB_NAME: kidslike
+            DB_SYNCHRONIZE: false
+            JWT_SECRET: test
+            JWT_EXPIRES_IN: 99999999999999999
+            BCRYPT_SALT_ROUNDS: 6
+            GOOGLE_OAUTH_CLIENT_ID: test.com
+            GOOGLE_OAUTH_CLIENT_SECRET: test
+            GOOGLE_OAUTH_CALLBACK_URL: http://test.com/callback
+            APPLE_IN_APP_PURCHASES_BASE_URL: stub
+            APPLE_IN_APP_PURCHASES_PASSWORD: stub
+          command: yarn test:integration && yarn test:e2e
+
+workflows:
+  pre_deploy:
+    jobs:
+      - test_unit
+      - test_e2e:
+          requires:
+            - test_unit

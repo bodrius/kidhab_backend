@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "schedule": "0 0 0 * * *",
+      "name": "appendTasksTimer",
+      "type": "timerTrigger",
+      "direction": "in"
+    }
+  ],
+  "scriptFile": "../dist/append-tasks/index.js"
+}

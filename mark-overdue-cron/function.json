@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "schedule": "0 0 1 * * *",
+      "name": "markOverdueTimer",
+      "type": "timerTrigger",
+      "direction": "in"
+    }
+  ],
+  "scriptFile": "../dist/mark-overdue-cron/index.js"
+}
